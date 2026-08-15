@@ -28,6 +28,8 @@ git clone https://github.com/chav0/UnityFigmaMCP.git
 
 ### Get a Figma Token
 
+<img width="480" height="772" alt="FigmaToken" src="https://github.com/user-attachments/assets/840ca07d-32c8-498e-871f-63e6a3407ed1" />
+
 1. Go to [Figma Settings > Personal Access Tokens](https://www.figma.com/developers/api#access-tokens)
 2. Create a new token with **read** access to your files
 3. Copy the token — you'll need it in the next step
@@ -147,12 +149,16 @@ Open `Packages/manifest.json` in your Unity project and add:
 
 ### Verify connection
 
+<img width="416" height="483" alt="Connection" src="https://github.com/user-attachments/assets/be689d59-9e4d-4cf4-b3e0-e86d7095977a" />
+
 When Unity opens, the package connects to the MCP server's SignalR hub on `localhost:52802`.
 You'll see a console message when the connection is established.
 
 If the MCP server isn't running yet, the package will retry automatically when a tool is invoked.
 
 ## Part 4 — Configure a Layout Pipeline
+
+<img width="398" height="273" alt="LayoutPipeline" src="https://github.com/user-attachments/assets/180c7fa5-a18b-459f-a71a-41a45c80d6e5" />
 
 The build pipeline needs at least one layout profile to know which steps to run.
 
