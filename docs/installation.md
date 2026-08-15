@@ -177,7 +177,8 @@ The build pipeline needs at least one layout profile to know which steps to run.
 | 4 | Horizontal Group Pipeline Step |
 | 5 | Grid Pipeline Step |
 
-You can add **Content Size Fitter Pipeline Step** if your designs use hug-content sizing.
+You can add **Content Size Fitter Pipeline Step** if your designs use hug-content sizing. 
+You can also add your own steps by inheriting from FigmaLayoutPipelineObjectStepBase and insert them in pipeline.
 
 Without a configured pipeline, `unity_build_prefab` will fail. You can create multiple
 pipelines for different use cases (screens, popups, HUD elements) and select them at build time.
