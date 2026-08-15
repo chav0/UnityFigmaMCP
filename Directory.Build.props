@@ -1,0 +1,7 @@
+<Project>
+  <!-- Must set paths before SDK imports; keeps Common.dll out of UnityFigmaMCPPackage (avoids asmdef name clash). -->
+  <PropertyGroup Condition="'$(MSBuildProjectName)' == 'UnityFigmaMCPCommon'">
+    <BaseOutputPath>$(MSBuildThisFileDirectory)artifacts\bin\$(MSBuildProjectName)\</BaseOutputPath>
+    <BaseIntermediateOutputPath>$(MSBuildThisFileDirectory)artifacts\obj\$(MSBuildProjectName)\</BaseIntermediateOutputPath>
+  </PropertyGroup>
+</Project>

@@ -1,0 +1,151 @@
+.panel {
+    background-color: #2C2C2C;
+}
+
+.panel__header {
+    padding: 12px 16px;
+    border-bottom-width: 1px;
+    border-bottom-color: #383838;
+}
+
+.panel__header-title {
+    font-size: 13px;
+    -unity-font-style: bold;
+    color: #FFFFFF;
+}
+
+.panel__section {
+    padding: 10px 16px;
+    border-bottom-width: 1px;
+    border-bottom-color: #383838;
+}
+
+.panel__section-title {
+    font-size: 12px;
+    -unity-font-style: bold;
+    color: #EBEBEB;
+    margin-bottom: 8px;
+}
+
+.panel__section-body > * {
+    margin-bottom: 4px;
+}
+
+.mcp-hub-url-row {
+    flex-direction: row;
+    align-items: center;
+    flex-wrap: wrap;
+}
+
+.mcp-hub-url-caption {
+    min-width: 90px;
+    margin-right: 8px;
+    color: #B3B3B3;
+    font-size: 11px;
+}
+
+.mcp-hub-url-value {
+    flex-grow: 1;
+    min-width: 0;
+    color: #FFFFFF;
+    font-size: 11px;
+}
+
+.mcp-scroll {
+    flex-grow: 1;
+}
+
+.mcp-help-wrap {
+    padding: 8px 16px 4px;
+}
+
+/* Info callout (replaces uie:HelpBox in UXML — works on all Unity versions). */
+.mcp-help-box {
+    flex-direction: row;
+    padding: 10px 12px;
+    background-color: #333d47;
+    border-radius: 4px;
+    border-left-width: 4px;
+    border-left-color: #6dafed;
+}
+
+.mcp-help-box__text {
+    white-space: normal;
+    font-size: 11px;
+    color: #d0dae6;
+    flex-grow: 1;
+    min-width: 0;
+}
+
+.mcp-button-row {
+    flex-direction: row;
+    align-items: center;
+    margin-top: 8px;
+}
+
+.mcp-button-row > Button {
+    margin-right: 8px;
+}
+
+.btn-mcp-primary {
+    height: 28px;
+    min-width: 120px;
+    background-color: #0C8CE9;
+    border-color: #0A7BD4;
+    border-radius: 6px;
+    color: #FFFFFF;
+    font-size: 12px;
+    -unity-font-style: bold;
+}
+
+.btn-mcp-primary:hover {
+    background-color: #3DA5F5;
+}
+
+.btn-mcp-primary:active {
+    background-color: #0A6BBF;
+}
+
+/* Secondary — same idea as Figma .btn-browse */
+.btn-mcp-secondary {
+    height: 26px;
+    min-width: 88px;
+    background-color: #4A4A4A;
+    border-width: 0;
+    border-radius: 3px;
+    color: #B3B3B3;
+    font-size: 11px;
+    -unity-font-style: bold;
+    -unity-text-align: middle-center;
+    padding: 0 10px;
+}
+
+.btn-mcp-secondary:hover {
+    background-color: #5A5A5A;
+    color: #FFFFFF;
+}
+
+.mcp-status {
+    font-size: 12px;
+    -unity-font-style: bold;
+    color: #EBEBEB;
+    margin-bottom: 8px;
+}
+
+.mcp-log-view {
+    height: 200px;
+    min-height: 120px;
+    flex-grow: 1;
+    background-color: #333333;
+    border-radius: 4px;
+    padding: 6px;
+    border-width: 1px;
+    border-color: #4A4A4A;
+}
+
+.mcp-log-line {
+    white-space: normal;
+    font-size: 11px;
+    color: #B3B3B3;
+    margin-bottom: 2px;
+}

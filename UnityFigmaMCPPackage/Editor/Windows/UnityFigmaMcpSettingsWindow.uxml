@@ -1,0 +1,38 @@
+<ui:UXML xmlns:ui="UnityEngine.UIElements">
+    
+    <Style src="UnityFigmaMcpSettingsWindow.uss" />
+    
+    <ui:ScrollView name="root-scroll" class="panel mcp-scroll">
+        <ui:VisualElement class="panel__header">
+            <ui:Label text="Unity Figma MCP" class="panel__header-title" />
+        </ui:VisualElement>
+
+        <ui:VisualElement class="mcp-help-wrap">
+            <ui:VisualElement class="mcp-help-box">
+                <ui:Label name="help-intro" class="mcp-help-box__text"
+                    text="1) Start the MCP server (it launches automatically via MCP client config).&#10;2) Press &quot;Connect&quot; to connect. &quot;Test Ping&quot; verifies the connection." />
+            </ui:VisualElement>
+        </ui:VisualElement>
+
+        <ui:VisualElement class="panel__section">
+            <ui:Label text="MCP Server" class="panel__section-title" />
+            <ui:VisualElement class="panel__section-body">
+                <ui:VisualElement class="mcp-hub-url-row">
+                    <ui:Label text="Server URL" class="mcp-hub-url-caption" />
+                    <ui:Label name="hub-url-display" class="mcp-hub-url-value" />
+                </ui:VisualElement>
+                <ui:VisualElement class="mcp-button-row">
+                    <ui:Button name="btn-connect" text="Connect" class="btn-mcp-primary" />
+                    <ui:Button name="btn-ping" text="Test Ping" class="btn-mcp-secondary" />
+                    <ui:Button name="btn-clear-log" text="Clear log" class="btn-mcp-secondary" />
+                </ui:VisualElement>
+            </ui:VisualElement>
+        </ui:VisualElement>
+
+        <ui:VisualElement class="panel__section">
+            <ui:Label name="status-label" text="Status: Disconnected" class="mcp-status" />
+            <ui:Label text="Log" class="panel__section-title" />
+            <ui:ScrollView name="log-view" class="mcp-log-view" />
+        </ui:VisualElement>
+    </ui:ScrollView>
+</ui:UXML>

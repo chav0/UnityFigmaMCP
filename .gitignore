@@ -5,6 +5,9 @@
 # Recommended: add any editor/OS/tool-specific ignore rules from the Global/ templates as needed.
 # See: https://github.com/github/gitignore/tree/main/Global
 #
+# macOS Finder
+.DS_Store
+
 .utmp/
 /[Ll]ibrary/
 /[Tt]emp/
@@ -45,7 +48,6 @@ ExportedObj/
 .consulo/
 *.csproj
 *.unityproj
-*.sln
 *.slnx
 *.suo
 *.tmp
@@ -104,3 +106,19 @@ InitTestScene*.unity*
 
 # Auto-generated cache in Assets folder
 /[Aa]ssets/[Ss]ceneDependencyCache*
+
+# Project specific files
+UnityFigmaMCPServer/bin/
+UnityFigmaMCPServer/obj/
+artifacts/
+# dotnet output + Unity folder .meta inside package
+UnityFigmaMCPPackage/**/bin/
+UnityFigmaMCPPackage/**/bin.meta
+UnityFigmaMCPPackage/**/obj/
+UnityFigmaMCPPackage/**/obj.meta
+
+!UnityFigmaMCPServer/**/*.csproj
+!UnityFigmaMCPPackage/Editor/Common/UnityFigmaMCPCommon.csproj
+
+# Rider
+.idea/

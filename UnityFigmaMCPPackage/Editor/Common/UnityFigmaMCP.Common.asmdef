@@ -1,0 +1,16 @@
+{
+    "name": "UnityFigmaMCP.Common",
+    "rootNamespace": "UnityFigmaMCP.Common",
+    "references": [],
+    "includePlatforms": [
+        "Editor"
+    ],
+    "excludePlatforms": [],
+    "allowUnsafeCode": false,
+    "overrideReferences": false,
+    "precompiledReferences": [],
+    "autoReferenced": true,
+    "defineConstraints": [],
+    "versionDefines": [],
+    "noEngineReferences": true
+}

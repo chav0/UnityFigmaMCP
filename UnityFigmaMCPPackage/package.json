@@ -1,0 +1,24 @@
+{
+  "name": "com.hugglebit.unity.figma.mcp",
+  "version": "0.1.0",
+  "displayName": "Unity Figma MCP",
+  "description": "Editor bridge for the Unity Figma MCP server. Connects the Unity Editor to AI-driven Figma layouts via MCP.",
+  "unity": "2021.3",
+  "author": {
+    "name": "Hugglebit",
+    "url": "https://github.com/chav0"
+  },
+  "keywords": [
+    "mcp",
+    "figma",
+    "unity-editor",
+    "model-context-protocol",
+    "ai",
+    "layout",
+    "editor-tool"
+  ],
+  "dependencies": {
+    "com.unity.nuget.newtonsoft-json": "3.0.1",
+    "com.unity.textmeshpro": "3.0.6"
+  }
+}
