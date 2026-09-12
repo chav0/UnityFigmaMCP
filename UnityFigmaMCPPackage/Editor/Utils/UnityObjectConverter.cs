@@ -8,32 +8,33 @@ namespace UnityFigmaMCP.Editor
 {
     internal static class UnityObjectConverter
     {
-        internal static UnityObject Convert(GameObject gameObject, IComponentMapper[] mappers, string path = null, bool includeChildren = true)
+        internal static UnityObject Convert(GameObject gameObject, IComponentMapper[] mappers, string path = null, bool includeChildren = true, bool isRoot = true)
         {
-            var gameObjectComponent = new GameObjectComponent
-            {
-                Layer = gameObject.layer,
-                Tag = gameObject.tag
-            };
+            GameObjectComponent go = null;
+            var isNestedPrefab = false;
 
             if (PrefabUtility.IsPartOfPrefabInstance(gameObject))
             {
                 var prefabAsset = PrefabUtility.GetCorrespondingObjectFromSource(gameObject);
                 if (prefabAsset != null)
                 {
-                    gameObjectComponent.PrefabPath = AssetDatabase.GetAssetPath(prefabAsset);
+                    go = new GameObjectComponent { Prefab = AssetDatabase.GetAssetPath(prefabAsset) };
                     var component = FigmaComponentMap.GetOrCreate().FindComponent(null, prefabAsset.name);
                     if (component != null)
-                        gameObjectComponent.ComponentKey = component.id;
+                        go.Key = component.id;
+
+                    isNestedPrefab = !isRoot;
                 }
             }
+
+            var currentPath = path ?? gameObject.name;
 
             var result = new UnityObject
             {
                 Name = gameObject.name,
-                Path = path ?? gameObject.name,
-                Active = gameObject.activeSelf,
-                GameObject = gameObjectComponent
+                Path = path,
+                Active = gameObject.activeSelf ? null : (bool?)false,
+                GO = go
             };
 
             foreach (var mapper in mappers)
@@ -42,9 +43,9 @@ namespace UnityFigmaMCP.Editor
             var button = gameObject.GetComponent<Button>();
             if (button != null)
             {
-                result.Button = new ButtonComponent
+                result.Btn = new ButtonComponent
                 {
-                    Interactable = button.interactable,
+                    Interactable = button.interactable ? null : (bool?)false,
                     Transition = button.transition.ToString()
                 };
             }
@@ -53,14 +54,18 @@ namespace UnityFigmaMCP.Editor
             var mask = gameObject.GetComponent<Mask>();
             if (rectMask != null)
             {
-                result.Mask = new MaskComponent { IsRectMask = true, ShowGraphic = true };
+                result.Mask = new MaskComponent { IsRect = true };
             }
             else if (mask != null)
             {
-                result.Mask = new MaskComponent { IsRectMask = false, ShowGraphic = mask.showMaskGraphic };
+                result.Mask = new MaskComponent
+                {
+                    IsRect = false,
+                    Show = mask.showMaskGraphic ? null : (bool?)false
+                };
             }
 
-            if (includeChildren)
+            if (includeChildren && !isNestedPrefab)
             {
                 var transform = gameObject.transform;
                 if (transform.childCount > 0)
@@ -69,8 +74,8 @@ namespace UnityFigmaMCP.Editor
                     for (var i = 0; i < transform.childCount; i++)
                     {
                         var child = transform.GetChild(i).gameObject;
-                        var childPath = result.Path + "/" + child.name;
-                        children.Add(Convert(child, mappers, childPath));
+                        var childPath = currentPath + "/" + child.name;
+                        children.Add(Convert(child, mappers, childPath, true, false));
                     }
                     result.Children = children.ToArray();
                 }

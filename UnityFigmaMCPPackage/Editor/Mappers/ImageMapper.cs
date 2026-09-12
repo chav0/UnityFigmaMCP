@@ -16,19 +16,19 @@ namespace UnityFigmaMCP.Editor
 
             return new ImageComponent
             {
-                SpriteName = image.sprite != null ? image.sprite.name : null,
-                SpritePath = spritePath,
+                Sprite = image.sprite != null ? image.sprite.name : null,
+                Path = spritePath,
                 Color = ColorUtility.ToHtmlStringRGBA(image.color),
                 Type = image.type.ToString(),
-                RaycastTarget = image.raycastTarget
+                Raycast = image.raycastTarget ? (bool?)true : null
             };
         }
 
         public override void Write(Image image, ImageComponent dto)
         {
-            if (!string.IsNullOrEmpty(dto.SpritePath))
+            if (!string.IsNullOrEmpty(dto.Path))
             {
-                var sprite = AssetDatabase.LoadAssetAtPath<Sprite>(dto.SpritePath);
+                var sprite = AssetDatabase.LoadAssetAtPath<Sprite>(dto.Path);
                 if (sprite != null)
                     image.sprite = sprite;
             }
@@ -39,10 +39,10 @@ namespace UnityFigmaMCP.Editor
             if (!string.IsNullOrEmpty(dto.Type) && Enum.TryParse<Image.Type>(dto.Type, true, out var type))
                 image.type = type;
 
-            if (dto.RaycastTarget.HasValue)
-                image.raycastTarget = dto.RaycastTarget.Value;
+            if (dto.Raycast.HasValue)
+                image.raycastTarget = dto.Raycast.Value;
         }
 
-        protected override void Assign(UnityObject target, ImageComponent dto) => target.Image = dto;
+        protected override void Assign(UnityObject target, ImageComponent dto) => target.Img = dto;
     }
 }

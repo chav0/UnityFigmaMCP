@@ -134,6 +134,13 @@ namespace UnityFigmaMCP.Server.Figma
                     var key = file.GetComponentKey(componentNodeId);
                     if (!string.IsNullOrEmpty(key))
                         info.ComponentKey = key;
+
+                    var componentSetId = file.GetComponentSetId(componentNodeId);
+                    if (!string.IsNullOrEmpty(componentSetId))
+                    {
+                        info.ComponentSetKey = file.GetComponentKey(componentSetId) ?? componentSetId;
+                        info.ComponentSetName = file.root?.FindNode(componentSetId)?.name;
+                    }
                 }
 
                 return info;

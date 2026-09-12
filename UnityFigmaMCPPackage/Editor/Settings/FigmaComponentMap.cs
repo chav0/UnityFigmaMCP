@@ -32,18 +32,18 @@ namespace UnityFigmaMCP.Editor
 
         public FigmaComponent FindComponent(string key, string prefabName = null)
         {
-            if (!string.IsNullOrEmpty(prefabName))
-            {
-                var byName = components.FirstOrDefault(c => c.name == prefabName);
-                if (byName != null)
-                    return byName;
-            }
-
             if (!string.IsNullOrEmpty(key))
             {
                 var byKey = components.FirstOrDefault(c => c.id == key);
                 if (byKey != null)
                     return byKey;
+            }
+
+            if (!string.IsNullOrEmpty(prefabName))
+            {
+                var byName = components.FirstOrDefault(c => c.name == prefabName);
+                if (byName != null)
+                    return byName;
             }
 
             return null;
@@ -138,18 +138,18 @@ namespace UnityFigmaMCP.Editor
 
         public FigmaComponentVariant FindVariant(string key, string variantName = null)
         {
-            if (!string.IsNullOrEmpty(variantName))
-            {
-                var byName = variants.FirstOrDefault(v => v.name == variantName);
-                if (byName != null)
-                    return byName;
-            }
-
             if (!string.IsNullOrEmpty(key))
             {
                 var byKey = variants.FirstOrDefault(v => v.id == key);
                 if (byKey != null)
                     return byKey;
+            }
+
+            if (!string.IsNullOrEmpty(variantName))
+            {
+                var byName = variants.FirstOrDefault(v => v.name == variantName);
+                if (byName != null)
+                    return byName;
             }
 
             return null;

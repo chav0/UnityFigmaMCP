@@ -146,9 +146,10 @@ namespace UnityFigmaMCP.Server.Unity
         [Description("Bind existing Unity assets to Figma keys so later builds reuse them instead of regenerating. " +
                      "Automatically resolves Figma component keys and names from cached node data (call figma_get_node first). " +
                      "Prefabs go into the component map; sprites go into the sprite map with both the component key and original Figma name for lookup. " +
+                     "Use kind \"variant\" for prefabs that correspond to a variant inside a Figma component set — the parent set is resolved automatically. " +
                      "Use unity_list_assets to find assets whose figmaKey is still null.")]
         public Task<string> Bind(
-            [Description("What is being bound: \"prefab\" or \"sprite\"")] string kind,
+            [Description("What is being bound: \"prefab\", \"sprite\" or \"variant\"")] string kind,
             [Description("Figma file key")] string fileKey,
             [Description("Assets to bind")] BindInput[] assets,
             CancellationToken ct = default)
@@ -163,7 +164,9 @@ namespace UnityFigmaMCP.Server.Unity
                 {
                     AssetPath = a.AssetPath,
                     FigmaKey = nodeInfo[a.NodeId].ComponentKey,
-                    FigmaName = nodeInfo[a.NodeId].FigmaName
+                    FigmaName = nodeInfo[a.NodeId].FigmaName,
+                    ParentKey = nodeInfo[a.NodeId].ComponentSetKey,
+                    ParentName = nodeInfo[a.NodeId].ComponentSetName
                 }).ToArray()
             }, ct);
         }
@@ -174,7 +177,8 @@ namespace UnityFigmaMCP.Server.Unity
                      "use it to see what already exists before building or downloading anything.")]
         public Task<string> ListAssets(
             [Description("Which assets to list: \"prefab\" or \"sprite\"")] string kind,
+            [Description("Optional name filter (e.g. \"Card\" matches \"CardSmall\", \"IconCard\"). Null lists everything.")] string? query = null,
             CancellationToken ct = default)
-            => _commandService.SendCommandAsync(new ListAssetsCommand { Kind = kind }, ct);
+            => _commandService.SendCommandAsync(new ListAssetsCommand { Kind = kind, Query = query }, ct);
     }
 }

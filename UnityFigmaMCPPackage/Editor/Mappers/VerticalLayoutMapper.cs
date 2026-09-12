@@ -5,44 +5,41 @@ namespace UnityFigmaMCP.Editor
 {
     internal sealed class VerticalLayoutMapper : LayoutGroupMapper<VerticalLayoutGroup, VerticalLayoutComponent>
     {
-        public override VerticalLayoutComponent Read(VerticalLayoutGroup verticalLayoutGroup)
+        public override VerticalLayoutComponent Read(VerticalLayoutGroup v)
         {
             return new VerticalLayoutComponent
             {
-                Spacing = verticalLayoutGroup.spacing,
-                ChildAlignment = verticalLayoutGroup.childAlignment.ToString(),
-                ChildForceExpandWidth = verticalLayoutGroup.childForceExpandWidth,
-                ChildForceExpandHeight = verticalLayoutGroup.childForceExpandHeight,
-                ChildControlWidth = verticalLayoutGroup.childControlWidth,
-                ChildControlHeight = verticalLayoutGroup.childControlHeight,
-                PaddingLeft = verticalLayoutGroup.padding.left,
-                PaddingRight = verticalLayoutGroup.padding.right,
-                PaddingTop = verticalLayoutGroup.padding.top,
-                PaddingBottom = verticalLayoutGroup.padding.bottom
+                Spacing = v.spacing,
+                Align = v.childAlignment.ToString(),
+                ExpandW = v.childForceExpandWidth,
+                ExpandH = v.childForceExpandHeight,
+                ControlW = v.childControlWidth,
+                ControlH = v.childControlHeight,
+                Pad = new[] { (float)v.padding.left, v.padding.right, v.padding.top, v.padding.bottom }
             };
         }
 
-        public override void Write(VerticalLayoutGroup verticalLayoutGroup, VerticalLayoutComponent dto)
+        public override void Write(VerticalLayoutGroup v, VerticalLayoutComponent dto)
         {
-            if (dto.Spacing.HasValue) 
-                verticalLayoutGroup.spacing = dto.Spacing.Value;
+            if (dto.Spacing.HasValue)
+                v.spacing = dto.Spacing.Value;
 
-            if (dto.ChildForceExpandWidth.HasValue)
-                verticalLayoutGroup.childForceExpandWidth = dto.ChildForceExpandWidth.Value;
-            
-            if (dto.ChildForceExpandHeight.HasValue)
-                verticalLayoutGroup.childForceExpandHeight = dto.ChildForceExpandHeight.Value;
-            
-            if (dto.ChildControlWidth.HasValue) 
-                verticalLayoutGroup.childControlWidth = dto.ChildControlWidth.Value;
-            
-            if (dto.ChildControlHeight.HasValue) 
-                verticalLayoutGroup.childControlHeight = dto.ChildControlHeight.Value;
+            if (dto.ExpandW.HasValue)
+                v.childForceExpandWidth = dto.ExpandW.Value;
 
-            ApplyAlignment(verticalLayoutGroup, dto.ChildAlignment);
-            ApplyPadding(verticalLayoutGroup, dto.PaddingLeft, dto.PaddingRight, dto.PaddingTop, dto.PaddingBottom);
+            if (dto.ExpandH.HasValue)
+                v.childForceExpandHeight = dto.ExpandH.Value;
+
+            if (dto.ControlW.HasValue)
+                v.childControlWidth = dto.ControlW.Value;
+
+            if (dto.ControlH.HasValue)
+                v.childControlHeight = dto.ControlH.Value;
+
+            ApplyAlignment(v, dto.Align);
+            ApplyPadding(v, dto.Pad);
         }
 
-        protected override void Assign(UnityObject target, VerticalLayoutComponent dto) => target.VerticalLayout = dto;
+        protected override void Assign(UnityObject target, VerticalLayoutComponent dto) => target.VLayout = dto;
     }
 }

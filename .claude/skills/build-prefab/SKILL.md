@@ -156,3 +156,7 @@ If there are no missing sprites, say so — that's a good outcome worth noting.
 
 - After building, the user may want to refine the result — restructure hierarchy,
   adjust layout, remove wrappers. That's a separate task, not part of this skill.
+
+- **Nested prefabs are collapsed.** When a hierarchy contains nested prefab instances,
+  their children are not included — they appear as leaf nodes with `GO.Prefab` set.
+  To inspect a nested prefab's internals, call `unity_get_hierarchy` on its asset path.

@@ -11,5 +11,8 @@ namespace UnityFigmaMCP.Common
         public string AssetPath { get; set; }
         public string FigmaKey { get; set; }
         public string FigmaName { get; set; }
+
+        public string ParentKey { get; set; }
+        public string ParentName { get; set; }
     }
 }

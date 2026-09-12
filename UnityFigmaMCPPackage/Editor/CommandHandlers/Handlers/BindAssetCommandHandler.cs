@@ -25,9 +25,13 @@ namespace UnityFigmaMCP.Editor
                         results[i] = BindSprite(entry);
                         break;
 
+                    case AssetKinds.Variant:
+                        results[i] = BindVariant(entry);
+                        break;
+
                     default:
                         throw new Exception(
-                            $"Unknown asset kind \"{command.Kind}\". Use \"{AssetKinds.Prefab}\" or \"{AssetKinds.Sprite}\".");
+                            $"Unknown asset kind \"{command.Kind}\". Use \"{AssetKinds.Prefab}\", \"{AssetKinds.Sprite}\" or \"{AssetKinds.Variant}\".");
                 }
             }
 
@@ -46,6 +50,26 @@ namespace UnityFigmaMCP.Editor
             FigmaComponentMap.GetOrCreate().AddComponent(entry.FigmaKey, prefab.name, prefab);
 
             return new AssetInfo { Name = prefab.name, Path = entry.AssetPath, FigmaKey = entry.FigmaKey };
+        }
+
+        private static AssetInfo BindVariant(BindEntry entry)
+        {
+            if (string.IsNullOrEmpty(entry.FigmaKey))
+                throw new Exception($"Could not resolve a variant key for '{entry.AssetPath}'. Ensure the node was fetched via figma_get_node first.");
+
+            if (string.IsNullOrEmpty(entry.ParentKey))
+                throw new Exception($"'{entry.AssetPath}' is not part of a Figma component set. Bind it as \"{AssetKinds.Prefab}\" instead.");
+
+            var prefab = AssetDatabase.LoadAssetAtPath<GameObject>(entry.AssetPath);
+            if (prefab == null)
+                throw new Exception($"Prefab not found at '{entry.AssetPath}'");
+
+            var variantName = !string.IsNullOrEmpty(entry.FigmaName) ? entry.FigmaName : prefab.name;
+
+            FigmaComponentMap.GetOrCreate()
+                .AddVariant(entry.ParentKey, entry.ParentName, entry.FigmaKey, variantName, prefab);
+
+            return new AssetInfo { Name = variantName, Path = entry.AssetPath, FigmaKey = entry.FigmaKey };
         }
 
         private static AssetInfo BindSprite(BindEntry entry)

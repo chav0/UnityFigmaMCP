@@ -84,6 +84,21 @@ unity_bind(kind: "sprite", fileKey: "<key>", assets: [
 The server resolves component keys and Figma names automatically from cached node
 data — you only need to pass asset paths and node IDs.
 
+**Variants.** When a prefab corresponds to a variant inside a Figma component set
+(e.g. `Button/State=Hover`), bind it with `kind: "variant"` instead of `"prefab"`.
+Pass the variant's own node ID — the parent component set is resolved automatically
+and the prefab is registered under it rather than as a standalone component:
+
+```
+unity_bind(kind: "variant", fileKey: "<key>", assets: [
+  { assetPath: "Assets/UI/Prefabs/ButtonHover.prefab", nodeId: "126:200" },
+  { assetPath: "Assets/UI/Prefabs/ButtonPressed.prefab", nodeId: "126:201" }
+])
+```
+
+If a node turns out not to belong to a component set, the call fails with a message
+telling you to bind it as `"prefab"` instead.
+
 ### Step 5 — Report
 
 Present results in the user's language:

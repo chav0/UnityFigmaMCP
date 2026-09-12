@@ -1,8 +1,8 @@
 using System;
 using System.Collections.Generic;
+using System.IO;
 using System.Linq;
 using UnityEditor;
-using UnityEngine;
 using UnityFigmaMCP.Common;
 
 namespace UnityFigmaMCP.Editor
@@ -37,6 +37,10 @@ namespace UnityFigmaMCP.Editor
             }
 
             var searchFolder = !string.IsNullOrEmpty(folder) ? folder : "Assets";
+
+            if (!string.IsNullOrWhiteSpace(command.Query))
+                filter += " " + command.Query.Trim();
+
             var guids = AssetDatabase.FindAssets(filter, new[] { searchFolder });
             var assets = new List<AssetInfo>(guids.Length);
 
@@ -57,15 +61,12 @@ namespace UnityFigmaMCP.Editor
 
         private static AssetInfo DescribePrefab(string path)
         {
-            var prefab = AssetDatabase.LoadAssetAtPath<GameObject>(path);
-            if (prefab == null)
-                return null;
-
-            var component = FigmaComponentMap.GetOrCreate().FindComponent(null, prefab.name);
+            var name = Path.GetFileNameWithoutExtension(path);
+            var component = FigmaComponentMap.GetOrCreate().FindComponent(null, name);
 
             var info = new AssetInfo
             {
-                Name = prefab.name,
+                Name = name,
                 Path = path,
                 FigmaKey = component?.id
             };
@@ -88,15 +89,13 @@ namespace UnityFigmaMCP.Editor
 
         private static AssetInfo DescribeSprite(string path)
         {
-            var sprite = AssetDatabase.LoadAssetAtPath<Sprite>(path);
-            if (sprite == null)
-                return null;
+            var name = Path.GetFileNameWithoutExtension(path);
 
             return new AssetInfo
             {
-                Name = sprite.name,
+                Name = name,
                 Path = path,
-                FigmaKey = FigmaSpriteMap.GetOrCreate().FindId(sprite.name)
+                FigmaKey = FigmaSpriteMap.GetOrCreate().FindId(name)
             };
         }
     }

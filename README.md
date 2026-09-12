@@ -124,7 +124,7 @@ https://github.com/chav0/UnityFigmaMCP.git?path=UnityFigmaMCPPackage
 To pin a specific version:
 
 ```
-https://github.com/chav0/UnityFigmaMCP.git?path=UnityFigmaMCPPackage#v0.1.0
+https://github.com/chav0/UnityFigmaMCP.git?path=UnityFigmaMCPPackage#v0.1.1
 ```
 
 The package auto-connects to the MCP server on port `52802` when the Editor starts.

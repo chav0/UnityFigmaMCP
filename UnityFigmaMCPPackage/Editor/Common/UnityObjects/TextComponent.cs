@@ -8,21 +8,21 @@ namespace UnityFigmaMCP.Common
         public string Text { get; set; }
 
         [Description("Font size in points")]
-        public float? FontSize { get; set; }
+        public float? Size { get; set; }
 
         [Description("Font family name (e.g. \"Roboto\", \"Inter\")")]
-        public string FontFamily { get; set; }
+        public string Font { get; set; }
 
         [Description("Font style: \"Regular\", \"Bold\", \"Italic\" or \"BoldItalic\"")]
-        public string FontStyle { get; set; }
+        public string Style { get; set; }
 
         [Description("Hex color (e.g. \"#000000FF\")")]
         public string Color { get; set; }
 
         [Description("Text alignment (e.g. \"MidlineLeft\", \"Center\", \"TopRight\")")]
-        public string Alignment { get; set; }
+        public string Align { get; set; }
 
         [Description("Whether the font size auto-fits the rect")]
-        public bool? AutoSize { get; set; }
+        public bool? Auto { get; set; }
     }
 }

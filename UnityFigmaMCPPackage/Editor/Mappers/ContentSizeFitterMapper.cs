@@ -10,22 +10,22 @@ namespace UnityFigmaMCP.Editor
         {
             return new ContentSizeFitterComponent
             {
-                HorizontalFit = contentSizeFitter.horizontalFit.ToString(),
-                VerticalFit = contentSizeFitter.verticalFit.ToString()
+                HFit = contentSizeFitter.horizontalFit.ToString(),
+                VFit = contentSizeFitter.verticalFit.ToString()
             };
         }
 
         public override void Write(ContentSizeFitter contentSizeFitter, ContentSizeFitterComponent dto)
         {
-            if (!string.IsNullOrEmpty(dto.HorizontalFit) &&
-                Enum.TryParse<ContentSizeFitter.FitMode>(dto.HorizontalFit, true, out var horizontalFit))
+            if (!string.IsNullOrEmpty(dto.HFit) &&
+                Enum.TryParse<ContentSizeFitter.FitMode>(dto.HFit, true, out var horizontalFit))
                 contentSizeFitter.horizontalFit = horizontalFit;
 
-            if (!string.IsNullOrEmpty(dto.VerticalFit) &&
-                Enum.TryParse<ContentSizeFitter.FitMode>(dto.VerticalFit, true, out var verticalFit))
+            if (!string.IsNullOrEmpty(dto.VFit) &&
+                Enum.TryParse<ContentSizeFitter.FitMode>(dto.VFit, true, out var verticalFit))
                 contentSizeFitter.verticalFit = verticalFit;
         }
 
-        protected override void Assign(UnityObject target, ContentSizeFitterComponent dto) => target.ContentSizeFitter = dto;
+        protected override void Assign(UnityObject target, ContentSizeFitterComponent dto) => target.Fitter = dto;
     }
 }

@@ -6,60 +6,44 @@ namespace UnityFigmaMCP.Editor
 {
     internal sealed class RectTransformMapper : ComponentMapper<RectTransform, RectTransformComponent>
     {
-        public override RectTransformComponent Read(RectTransform rectTransform)
+        public override RectTransformComponent Read(RectTransform rt)
         {
             return new RectTransformComponent
             {
-                AnchorMinX = rectTransform.anchorMin.x,
-                AnchorMinY = rectTransform.anchorMin.y,
-                AnchorMaxX = rectTransform.anchorMax.x,
-                AnchorMaxY = rectTransform.anchorMax.y,
-                PivotX = rectTransform.pivot.x,
-                PivotY = rectTransform.pivot.y,
-                Width = rectTransform.rect.width,
-                Height = rectTransform.rect.height,
-                PosX = rectTransform.anchoredPosition.x,
-                PosY = rectTransform.anchoredPosition.y
+                Anchors = new[] { rt.anchorMin.x, rt.anchorMin.y, rt.anchorMax.x, rt.anchorMax.y },
+                Pivot = new[] { rt.pivot.x, rt.pivot.y },
+                Size = new[] { rt.rect.width, rt.rect.height },
+                Pos = new[] { rt.anchoredPosition.x, rt.anchoredPosition.y }
             };
         }
 
-        public override void Write(RectTransform rectTransform, RectTransformComponent dto)
+        public override void Write(RectTransform rt, RectTransformComponent dto)
         {
-            if (dto.AnchorMinX.HasValue || dto.AnchorMinY.HasValue)
-                rectTransform.anchorMin = new Vector2(
-                    dto.AnchorMinX ?? rectTransform.anchorMin.x,
-                    dto.AnchorMinY ?? rectTransform.anchorMin.y);
+            if (dto.Anchors is { Length: 4 })
+            {
+                rt.anchorMin = new Vector2(dto.Anchors[0], dto.Anchors[1]);
+                rt.anchorMax = new Vector2(dto.Anchors[2], dto.Anchors[3]);
+            }
 
-            if (dto.AnchorMaxX.HasValue || dto.AnchorMaxY.HasValue)
-                rectTransform.anchorMax = new Vector2(
-                    dto.AnchorMaxX ?? rectTransform.anchorMax.x,
-                    dto.AnchorMaxY ?? rectTransform.anchorMax.y);
+            if (dto.Pivot is { Length: 2 })
+                rt.pivot = new Vector2(dto.Pivot[0], dto.Pivot[1]);
 
-            if (dto.PivotX.HasValue || dto.PivotY.HasValue)
-                rectTransform.pivot = new Vector2(
-                    dto.PivotX ?? rectTransform.pivot.x,
-                    dto.PivotY ?? rectTransform.pivot.y);
+            if (dto.Size is { Length: 2 })
+                rt.sizeDelta = new Vector2(dto.Size[0], dto.Size[1]);
 
-            if (dto.Width.HasValue || dto.Height.HasValue)
-                rectTransform.sizeDelta = new Vector2(
-                    dto.Width ?? rectTransform.sizeDelta.x,
-                    dto.Height ?? rectTransform.sizeDelta.y);
-
-            if (dto.PosX.HasValue || dto.PosY.HasValue)
-                rectTransform.anchoredPosition = new Vector2(
-                    dto.PosX ?? rectTransform.anchoredPosition.x,
-                    dto.PosY ?? rectTransform.anchoredPosition.y);
+            if (dto.Pos is { Length: 2 })
+                rt.anchoredPosition = new Vector2(dto.Pos[0], dto.Pos[1]);
         }
 
         public override void Apply(GameObject gameObject, RectTransformComponent dto)
         {
-            var rectTransform = gameObject.GetComponent<RectTransform>();
-            if (rectTransform == null)
+            var rt = gameObject.GetComponent<RectTransform>();
+            if (rt == null)
                 throw new Exception("RectTransform not found");
-            
-            Write(rectTransform, dto);
+
+            Write(rt, dto);
         }
 
-        protected override void Assign(UnityObject target, RectTransformComponent dto) => target.RectTransform = dto;
+        protected override void Assign(UnityObject target, RectTransformComponent dto) => target.Rect = dto;
     }
 }

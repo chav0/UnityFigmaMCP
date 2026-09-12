@@ -16,6 +16,7 @@ namespace UnityFigmaMCP.Editor.Exporters
         private readonly FigmaSpriteMap _spriteMap;
         private readonly FigmaFile _file;
         private readonly FigmaLayoutPipelineProfile _pipelineProfile;
+        private readonly string _prefabSearchPath;
         private Scene _previewScene;
 
         private LayerMask UILayer => LayerMask.NameToLayer("UI");
@@ -24,6 +25,7 @@ namespace UnityFigmaMCP.Editor.Exporters
         {
             _componentMap = settings.ComponentMap;
             _spriteMap = settings.SpriteMap;
+            _prefabSearchPath = settings.PrefabFolderPath;
             _file = file;
             _pipelineProfile = profile;
         }
@@ -277,8 +279,8 @@ namespace UnityFigmaMCP.Editor.Exporters
             if (prefab != null)
                 return InstantiateInPreview(prefab);
 
-            var path = prefabsPath.TrimEnd('/');
-            var guids = AssetDatabase.FindAssets($"t:Prefab {componentName}", new[] {path});
+            var searchPath = !string.IsNullOrEmpty(_prefabSearchPath) ? _prefabSearchPath : prefabsPath;
+            var guids = AssetDatabase.FindAssets($"t:Prefab {componentName}", new[] {searchPath.TrimEnd('/')});
             foreach (var guid in guids)
             {
                 var found = (GameObject) AssetDatabase.LoadAssetAtPath(AssetDatabase.GUIDToAssetPath(guid), typeof(GameObject));

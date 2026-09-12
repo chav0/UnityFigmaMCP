@@ -1,4 +1,5 @@
 using System;
+using UnityEditor;
 using UnityEngine;
 using UnityFigmaMCP.Common;
 using Object = UnityEngine.Object;
@@ -63,16 +64,20 @@ namespace UnityFigmaMCP.Editor
                 case PrefabEditOps.SetActive:
                     if (!edit.Active.HasValue)
                         throw new Exception("\"setActive\" requires Active.");
-                    
+
                     Resolve(scope, edit.Path).SetActive(edit.Active.Value);
                     return;
 
+                case PrefabEditOps.Instantiate:
+                    Instantiate(scope, edit);
+                    return;
+
                 case PrefabEditOps.RectTransform:
-                    ApplyOrRemove(mappers.RectTransform, Resolve(scope, edit.Path), edit.RectTransform, edit.Remove);
+                    ApplyOrRemove(mappers.Rect, Resolve(scope, edit.Path), edit.Rect, edit.Remove);
                     return;
 
                 case PrefabEditOps.Image:
-                    ApplyOrRemove(mappers.Image, Resolve(scope, edit.Path), edit.Image, edit.Remove);
+                    ApplyOrRemove(mappers.Img, Resolve(scope, edit.Path), edit.Img, edit.Remove);
                     return;
 
                 case PrefabEditOps.Text:
@@ -80,19 +85,19 @@ namespace UnityFigmaMCP.Editor
                     return;
 
                 case PrefabEditOps.HorizontalLayout:
-                    ApplyOrRemove(mappers.HorizontalLayout, Resolve(scope, edit.Path), edit.HorizontalLayout, edit.Remove);
+                    ApplyOrRemove(mappers.HLayout, Resolve(scope, edit.Path), edit.HLayout, edit.Remove);
                     return;
 
                 case PrefabEditOps.VerticalLayout:
-                    ApplyOrRemove(mappers.VerticalLayout, Resolve(scope, edit.Path), edit.VerticalLayout, edit.Remove);
+                    ApplyOrRemove(mappers.VLayout, Resolve(scope, edit.Path), edit.VLayout, edit.Remove);
                     return;
 
                 case PrefabEditOps.GridLayout:
-                    ApplyOrRemove(mappers.GridLayout, Resolve(scope, edit.Path), edit.GridLayout, edit.Remove);
+                    ApplyOrRemove(mappers.Grid, Resolve(scope, edit.Path), edit.Grid, edit.Remove);
                     return;
 
                 case PrefabEditOps.ContentSizeFitter:
-                    ApplyOrRemove(mappers.ContentSizeFitter, Resolve(scope, edit.Path), edit.ContentSizeFitter, edit.Remove);
+                    ApplyOrRemove(mappers.Fitter, Resolve(scope, edit.Path), edit.Fitter, edit.Remove);
                     return;
 
                 default:
@@ -114,6 +119,25 @@ namespace UnityFigmaMCP.Editor
                 throw new Exception("The payload field for this op is required unless Remove is true.");
 
             mapper.Apply(target, payload);
+        }
+
+        private static void Instantiate(PrefabEditScope scope, PrefabEdit edit)
+        {
+            if (string.IsNullOrEmpty(edit.Prefab))
+                throw new Exception("\"instantiate\" requires Prefab (asset path).");
+
+            var prefab = AssetDatabase.LoadAssetAtPath<GameObject>(edit.Prefab);
+            if (prefab == null)
+                throw new Exception($"Prefab not found at \"{edit.Prefab}\".");
+
+            var parent = Resolve(scope, edit.Path);
+
+            var instance = (GameObject)PrefabUtility.InstantiatePrefab(prefab, parent.transform);
+            if (instance == null)
+                throw new Exception($"Failed to instantiate \"{edit.Prefab}\".");
+
+            if (edit.SiblingIndex.HasValue)
+                instance.transform.SetSiblingIndex(edit.SiblingIndex.Value);
         }
 
         private static void Create(PrefabEditScope scope, PrefabEdit edit)

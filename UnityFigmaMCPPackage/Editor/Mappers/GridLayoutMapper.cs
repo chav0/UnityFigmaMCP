@@ -7,54 +7,45 @@ namespace UnityFigmaMCP.Editor
 {
     internal sealed class GridLayoutMapper : LayoutGroupMapper<GridLayoutGroup, GridLayoutComponent>
     {
-        public override GridLayoutComponent Read(GridLayoutGroup gridLayoutGroup)
+        public override GridLayoutComponent Read(GridLayoutGroup g)
         {
             return new GridLayoutComponent
             {
-                CellSizeX = gridLayoutGroup.cellSize.x,
-                CellSizeY = gridLayoutGroup.cellSize.y,
-                SpacingX = gridLayoutGroup.spacing.x,
-                SpacingY = gridLayoutGroup.spacing.y,
-                StartCorner = gridLayoutGroup.startCorner.ToString(),
-                StartAxis = gridLayoutGroup.startAxis.ToString(),
-                ChildAlignment = gridLayoutGroup.childAlignment.ToString(),
-                Constraint = gridLayoutGroup.constraint.ToString(),
-                ConstraintCount = gridLayoutGroup.constraintCount,
-                PaddingLeft = gridLayoutGroup.padding.left,
-                PaddingRight = gridLayoutGroup.padding.right,
-                PaddingTop = gridLayoutGroup.padding.top,
-                PaddingBottom = gridLayoutGroup.padding.bottom
+                Cell = new[] { g.cellSize.x, g.cellSize.y },
+                Spacing = new[] { g.spacing.x, g.spacing.y },
+                Corner = g.startCorner.ToString(),
+                Axis = g.startAxis.ToString(),
+                Align = g.childAlignment.ToString(),
+                Constraint = g.constraint.ToString(),
+                Count = g.constraintCount,
+                Pad = new[] { (float)g.padding.left, g.padding.right, g.padding.top, g.padding.bottom }
             };
         }
 
-        public override void Write(GridLayoutGroup gridLayoutGroup, GridLayoutComponent dto)
+        public override void Write(GridLayoutGroup g, GridLayoutComponent dto)
         {
-            if (dto.CellSizeX.HasValue || dto.CellSizeY.HasValue)
-                gridLayoutGroup.cellSize = new Vector2(
-                    dto.CellSizeX ?? gridLayoutGroup.cellSize.x,
-                    dto.CellSizeY ?? gridLayoutGroup.cellSize.y);
+            if (dto.Cell is { Length: 2 })
+                g.cellSize = new Vector2(dto.Cell[0], dto.Cell[1]);
 
-            if (dto.SpacingX.HasValue || dto.SpacingY.HasValue)
-                gridLayoutGroup.spacing = new Vector2(
-                    dto.SpacingX ?? gridLayoutGroup.spacing.x,
-                    dto.SpacingY ?? gridLayoutGroup.spacing.y);
+            if (dto.Spacing is { Length: 2 })
+                g.spacing = new Vector2(dto.Spacing[0], dto.Spacing[1]);
 
-            if (!string.IsNullOrEmpty(dto.StartCorner) && Enum.TryParse<GridLayoutGroup.Corner>(dto.StartCorner, true, out var corner))
-                gridLayoutGroup.startCorner = corner;
+            if (!string.IsNullOrEmpty(dto.Corner) && Enum.TryParse<GridLayoutGroup.Corner>(dto.Corner, true, out var corner))
+                g.startCorner = corner;
 
-            if (!string.IsNullOrEmpty(dto.StartAxis) && Enum.TryParse<GridLayoutGroup.Axis>(dto.StartAxis, true, out var axis))
-                gridLayoutGroup.startAxis = axis;
+            if (!string.IsNullOrEmpty(dto.Axis) && Enum.TryParse<GridLayoutGroup.Axis>(dto.Axis, true, out var axis))
+                g.startAxis = axis;
 
             if (!string.IsNullOrEmpty(dto.Constraint) && Enum.TryParse<GridLayoutGroup.Constraint>(dto.Constraint, true, out var constraint))
-                gridLayoutGroup.constraint = constraint;
+                g.constraint = constraint;
 
-            if (dto.ConstraintCount.HasValue)
-                gridLayoutGroup.constraintCount = dto.ConstraintCount.Value;
+            if (dto.Count.HasValue)
+                g.constraintCount = dto.Count.Value;
 
-            ApplyAlignment(gridLayoutGroup, dto.ChildAlignment);
-            ApplyPadding(gridLayoutGroup, dto.PaddingLeft, dto.PaddingRight, dto.PaddingTop, dto.PaddingBottom);
+            ApplyAlignment(g, dto.Align);
+            ApplyPadding(g, dto.Pad);
         }
 
-        protected override void Assign(UnityObject target, GridLayoutComponent dto) => target.GridLayout = dto;
+        protected override void Assign(UnityObject target, GridLayoutComponent dto) => target.Grid = dto;
     }
 }

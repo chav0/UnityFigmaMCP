@@ -2,13 +2,13 @@ namespace UnityFigmaMCP.Editor
 {
     internal sealed class ComponentMappers
     {
-        public readonly RectTransformMapper RectTransform = new();
-        public readonly ImageMapper Image = new();
+        public readonly RectTransformMapper Rect = new();
+        public readonly ImageMapper Img = new();
         public readonly TextMapper Text = new();
-        public readonly HorizontalLayoutMapper HorizontalLayout = new();
-        public readonly VerticalLayoutMapper VerticalLayout = new();
-        public readonly GridLayoutMapper GridLayout = new();
-        public readonly ContentSizeFitterMapper ContentSizeFitter = new();
+        public readonly HorizontalLayoutMapper HLayout = new();
+        public readonly VerticalLayoutMapper VLayout = new();
+        public readonly GridLayoutMapper Grid = new();
+        public readonly ContentSizeFitterMapper Fitter = new();
 
         public readonly IComponentMapper[] All;
 
@@ -16,9 +16,9 @@ namespace UnityFigmaMCP.Editor
         {
             All = new IComponentMapper[]
             {
-                RectTransform, Image, Text,
-                HorizontalLayout, VerticalLayout, GridLayout,
-                ContentSizeFitter
+                Rect, Img, Text,
+                HLayout, VLayout, Grid,
+                Fitter
             };
         }
     }

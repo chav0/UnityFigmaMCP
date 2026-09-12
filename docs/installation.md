@@ -132,7 +132,7 @@ Click **Add**.
 To pin a specific version, append a git tag:
 
 ```
-https://github.com/chav0/UnityFigmaMCP.git?path=UnityFigmaMCPPackage#v0.1.0
+https://github.com/chav0/UnityFigmaMCP.git?path=UnityFigmaMCPPackage#v0.1.1
 ```
 
 ### Manual install (manifest.json)
@@ -142,7 +142,7 @@ Open `Packages/manifest.json` in your Unity project and add:
 ```json
 {
   "dependencies": {
-    "com.hugglebit.unity.figma.mcp": "https://github.com/chav0/UnityFigmaMCP.git?path=UnityFigmaMCPPackage#v0.1.0"
+    "com.hugglebit.unity.figma.mcp": "https://github.com/chav0/UnityFigmaMCP.git?path=UnityFigmaMCPPackage#v0.1.1"
   }
 }
 ```
@@ -259,4 +259,4 @@ and description, and the body for the workflow steps.
 
 - Make sure you're using Unity 2021.3 or later
 - Check that the git URL is correct — it must include `?path=UnityFigmaMCPPackage`
-- If using a tag, make sure it exists: `#v0.1.0`
+- If using a tag, make sure it exists: `#v0.1.1`

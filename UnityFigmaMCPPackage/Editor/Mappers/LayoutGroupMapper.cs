@@ -22,16 +22,16 @@ namespace UnityFigmaMCP.Editor
                 layout.childAlignment = anchor;
         }
 
-        protected static void ApplyPadding(LayoutGroup layoutGroup, float? left, float? right, float? top, float? bottom)
+        protected static void ApplyPadding(LayoutGroup layoutGroup, float[] padding)
         {
-            if (!left.HasValue && !right.HasValue && !top.HasValue && !bottom.HasValue)
+            if (padding == null || padding.Length < 4)
                 return;
 
             layoutGroup.padding = new RectOffset(
-                left.HasValue ? (int)left.Value : layoutGroup.padding.left,
-                right.HasValue ? (int)right.Value : layoutGroup.padding.right,
-                top.HasValue ? (int)top.Value : layoutGroup.padding.top,
-                bottom.HasValue ? (int)bottom.Value : layoutGroup.padding.bottom);
+                (int)padding[0],
+                (int)padding[1],
+                (int)padding[2],
+                (int)padding[3]);
         }
 
         private static void RemoveAllLayouts(GameObject gameObject)

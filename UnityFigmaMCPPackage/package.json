@@ -1,6 +1,6 @@
 {
   "name": "com.hugglebit.unity.figma.mcp",
-  "version": "0.1.0",
+  "version": "0.1.1",
   "displayName": "Unity Figma MCP",
   "description": "Editor bridge for the Unity Figma MCP server. Connects the Unity Editor to AI-driven Figma layouts via MCP.",
   "unity": "2021.3",

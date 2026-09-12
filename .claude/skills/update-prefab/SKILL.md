@@ -95,10 +95,12 @@ path fails the batch cleanly instead of leaving the asset half-updated.
 
 Order the edits like this, because later steps reference paths the earlier ones create:
 
-1. **`create`** — new nodes first, so the paths exist for the edits below
+1. **`create`** / **`instantiate`** — new nodes first, so the paths exist for the edits below.
+   Use `instantiate` to add an existing prefab as a nested instance:
+   `{ "op": "instantiate", "path": "Content", "prefab": "Assets/UI/Prefabs/Card.prefab" }`
 2. **`reparent`** — moves and reordering
-3. **Component ops** — `text`, `rectTransform`, `image`, `verticalLayout`,
-   `horizontalLayout`, `gridLayout`, `contentSizeFitter`, plus `setActive`
+3. **Component ops** — `text`, `rect`, `img`, `vLayout`,
+   `hLayout`, `grid`, `fitter`, plus `setActive`
 4. **`delete`** — last, and only for removals the user confirmed
 
 Deleting last matters: an earlier delete would invalidate the paths of anything
@@ -109,8 +111,8 @@ Example shape:
 ```json
 [
   { "op": "create", "path": "Content", "name": "Badge" },
-  { "op": "rectTransform", "path": "Content/Badge", "rectTransform": { "width": 24, "height": 24 } },
-  { "op": "text", "path": "Header/Title", "text": { "text": "Updated", "fontSize": 18 } },
+  { "op": "rect", "path": "Content/Badge", "rect": { "size": [24, 24] } },
+  { "op": "text", "path": "Header/Title", "text": { "text": "Updated", "size": 18 } },
   { "op": "delete", "path": "Card/OldLabel" }
 ]
 ```
@@ -140,6 +142,11 @@ No sprite changes were made. If sprites need updating, use `/download-sprites`.
 ```
 
 ## Important notes
+
+- **Nested prefabs are collapsed.** `unity_get_hierarchy` returns nested prefab
+  instances as leaf nodes (with `GO.Prefab` set, no `Children`). To inspect or
+  update a nested prefab, call `unity_get_hierarchy` on that prefab's asset path
+  separately. Do not try to edit children of a nested prefab through the parent.
 
 - This skill does NOT update sprites. If a Figma node's image fill changed, the user
   should re-download the sprite with `/download-sprites` separately.
