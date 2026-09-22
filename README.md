@@ -193,7 +193,7 @@ This runs the `status` tool and confirms both the Figma token and Unity connecti
 **Unity Package** — change the tag in your `Packages/manifest.json`:
 
 ```json
-"com.hugglebit.unity.figma.mcp": "https://github.com/chav0/UnityFigmaMCP.git?path=UnityFigmaMCPPackage#v0.2.0"
+"com.hugglebit.unity.figma.mcp": "https://github.com/chav0/UnityFigmaMCP.git?path=UnityFigmaMCPPackage#v0.1.1"
 ```
 
 **MCP Server** — pull and rebuild:
