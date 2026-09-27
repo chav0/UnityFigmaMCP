@@ -207,6 +207,14 @@ The `run-mcp.sh` script rebuilds automatically on each launch.
 
 **Skills** — re-copy the skill files from the updated repo.
 
+## Contact
+
+Questions, ideas or bug reports are welcome.
+
+- **Email** — [alinulken@gmail.com](mailto:alinulken@gmail.com)
+- **Telegram** — [@alinulken](https://t.me/alinulken)
+- **LinkedIn** — [achupakhina](https://www.linkedin.com/in/achupakhina/)
+
 ## License
 
 [MIT](LICENSE)
