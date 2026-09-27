@@ -67,14 +67,14 @@ Before applying anything, show the user what will change. Group by change type:
 
 ### Text changes
 - Header/Title: "Old Title" → "New Title"
-- Header/Subtitle: fontSize 14 → 16, color #333 → #222
+- Header/Subtitle: size 14 → 16, color #333 → #222
 
 ### Size changes
 - Card: 300×200 → 320×220
 - Card/Icon: 24×24 → 32×32
 
 ### Layout changes
-- Content: spacing 8 → 12, paddingTop 16 → 20
+- Content: spacing 8 → 12, pad top 16 → 20
 
 ### New nodes (will be created)
 - Card/Badge

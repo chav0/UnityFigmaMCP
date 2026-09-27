@@ -96,9 +96,43 @@ the hierarchy. All edits run in a single open/save cycle — failure leaves the 
 | `edits` | PrefabEdit[] | yes | Edits to apply, in order |
 | `includeChildren` | bool | no | Include child tree in response (default: `false`) |
 
-Supported edit operations:
-- **Component edits** (`add`, `update`, `remove`): RectTransform, Image, Text, layout groups, ContentSizeFitter
-- **Hierarchy edits** (`create`, `delete`, `reparent`, `setActive`): restructure the prefab tree
+Every edit carries an `op` and a `path` to the target object inside the prefab
+(null or empty targets the root).
+
+**Component ops** — each reads its matching payload field and adds the component
+if it is missing. Set `remove: true` and omit the payload to strip it instead.
+
+| Op | Payload field | Unity component |
+|----|---------------|-----------------|
+| `rect` | `rect` | RectTransform |
+| `img` | `img` | Image |
+| `text` | `text` | TextMeshProUGUI |
+| `hLayout` | `hLayout` | HorizontalLayoutGroup |
+| `vLayout` | `vLayout` | VerticalLayoutGroup |
+| `grid` | `grid` | GridLayoutGroup |
+| `fitter` | `fitter` | ContentSizeFitter |
+
+**Hierarchy ops**
+
+| Op | Required | Description |
+|----|----------|-------------|
+| `create` | `name` | Create an empty GameObject under `path` |
+| `instantiate` | `prefab` | Add an existing prefab as a nested instance under `path` |
+| `delete` | — | Delete the object at `path` |
+| `reparent` | `newParentPath` | Move the object; `siblingIndex` optional |
+| `setActive` | `active` | Toggle the object's active state |
+
+List `create` and `instantiate` first so later edits can reference the paths they
+produce, and `delete` last so it does not invalidate paths still in use.
+
+```json
+[
+  { "op": "create", "path": "Content", "name": "Badge" },
+  { "op": "rect", "path": "Content/Badge", "rect": { "size": [24, 24] } },
+  { "op": "instantiate", "path": "Content", "prefab": "Assets/UI/Prefabs/Card.prefab" },
+  { "op": "text", "path": "Header/Title", "text": { "text": "Updated", "size": 18 } }
+]
+```
 
 ### `unity_save_prefab`
 
@@ -121,6 +155,10 @@ Inspect the GameObject hierarchy of a prefab with all components and properties.
 | `prefabPath` | string | yes | Prefab asset path |
 | `objectPath` | string | no | Child path for subtree (null = full hierarchy) |
 
+Nested prefab instances are returned as leaf nodes: they carry `GO.Prefab` with the
+asset path but no `Children`, so a deep tree does not inline every nested asset.
+To look inside one, call `unity_get_hierarchy` again on that asset path.
+
 ## Asset Tools
 
 ### `unity_save_sprites`
@@ -142,11 +180,16 @@ Bind existing Unity assets to Figma keys so later builds reuse them instead of r
 
 | Parameter | Type | Required | Description |
 |-----------|------|----------|-------------|
-| `kind` | string | yes | `"prefab"` or `"sprite"` |
+| `kind` | string | yes | `"prefab"`, `"sprite"` or `"variant"` |
 | `fileKey` | string | yes | Figma file key |
 | `assets` | BindInput[] | yes | `{ assetPath, nodeId }` pairs |
 
-Component keys and Figma names are resolved automatically from cached node data.
+Component keys and Figma names are resolved automatically from cached node data,
+so call `figma_get_node` on the relevant nodes first.
+
+Use `"variant"` to bind a prefab as a variant of its Figma component set. The parent
+set is resolved from the node, and the variant is stored under its Figma name
+(`Selection=Chosen`), so several variants may point at the same prefab.
 
 ### `unity_list_assets`
 
@@ -155,5 +198,6 @@ List the prefab or sprite assets in the project's configured folder with their F
 | Parameter | Type | Required | Description |
 |-----------|------|----------|-------------|
 | `kind` | string | yes | `"prefab"` or `"sprite"` |
+| `query` | string | no | Name filter — `"Card"` matches `CardSmall` and `IconCard` (null lists everything) |
 
 Each entry shows the asset name, path, and `figmaKey` (null if unbound).

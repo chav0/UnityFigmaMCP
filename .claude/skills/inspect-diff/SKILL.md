@@ -89,9 +89,9 @@ Only in Unity (not in Figma):
 | Node           | Property   | Figma        | Unity        |
 |----------------|------------|--------------|--------------|
 | Header/Title   | text       | "New Title"  | "Old Title"  |
-| Header/Title   | fontSize   | 18           | 16           |
+| Header/Title   | size       | 18           | 16           |
 | Header/Title   | color      | #111111      | #333333      |
-| Card           | width      | 320          | 300          |
+| Card           | size       | [320, 200]   | [300, 200]   |
 | Content        | spacing    | 12           | 8            |
 ```
 
