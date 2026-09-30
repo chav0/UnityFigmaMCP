@@ -183,10 +183,10 @@ This runs the `status` tool and confirms both the Figma token and Unity connecti
 
 ## Documentation
 
-- **[Installation Guide](docs/installation.md)** — detailed setup for macOS and Windows
-- **[Tools Reference](docs/tools.md)** — all 13 MCP tools with parameters and examples
-- **[Skills Guide](docs/skills.md)** — how to use the 6 AI skills
-- **[Architecture](docs/architecture.md)** — how the three components connect
+- **[Installation Guide](documentation/installation.md)** — detailed setup for macOS and Windows
+- **[Tools Reference](documentation/tools.md)** — all 13 MCP tools with parameters and examples
+- **[Skills Guide](documentation/skills.md)** — how to use the 6 AI skills
+- **[Architecture](documentation/architecture.md)** — how the three components connect
 
 ## Updating
 
