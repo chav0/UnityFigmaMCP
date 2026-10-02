@@ -9,18 +9,19 @@ namespace UnityFigmaMCP.Editor
         public FigmaObject FigmaObject { get; }
         public Transform ParentTransform { get; }
         public FigmaObject RootFrame { get; }
-        public FigmaSpriteMap SpriteMap { get; }
+        public AssetResolver Assets { get; }
+        public FigmaSpriteMap SpriteMap => Assets?.SpriteMap;
         public FigmaObject ParentFigmaObject { get; }
 
         public ObjectLayoutContext(GameObject gameObject, FigmaObject figmaObject,
-            Transform parentTransform, FigmaObject rootFrame, FigmaSpriteMap spriteMap = null,
+            Transform parentTransform, FigmaObject rootFrame, AssetResolver assets = null,
             FigmaObject parentFigmaObject = null)
         {
             GameObject = gameObject;
             FigmaObject = figmaObject;
             ParentTransform = parentTransform;
             RootFrame = rootFrame;
-            SpriteMap = spriteMap;
+            Assets = assets;
             ParentFigmaObject = parentFigmaObject;
         }
     }

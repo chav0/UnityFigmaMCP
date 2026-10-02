@@ -16,7 +16,8 @@ namespace UnityFigmaMCP.Editor.Exporters
         private readonly FigmaSpriteMap _spriteMap;
         private readonly FigmaFile _file;
         private readonly FigmaLayoutPipelineProfile _pipelineProfile;
-        private readonly string _prefabSearchPath;
+        private readonly string _prefabFolder;
+        private AssetResolver _assets;
         private Scene _previewScene;
 
         private LayerMask UILayer => LayerMask.NameToLayer("UI");
@@ -25,7 +26,7 @@ namespace UnityFigmaMCP.Editor.Exporters
         {
             _componentMap = settings.ComponentMap;
             _spriteMap = settings.SpriteMap;
-            _prefabSearchPath = settings.PrefabFolderPath;
+            _prefabFolder = settings.PrefabFolderPath;
             _file = file;
             _pipelineProfile = profile;
         }
@@ -33,6 +34,8 @@ namespace UnityFigmaMCP.Editor.Exporters
         public GameObject Export(string prefabName, string prefabsPath)
         {
             _componentMap.Clean();
+            _assets = new AssetResolver(_componentMap, _spriteMap, _file,
+                !string.IsNullOrEmpty(_prefabFolder) ? _prefabFolder : prefabsPath);
             _previewScene = EditorSceneManager.NewPreviewScene();
 
             try
@@ -134,6 +137,7 @@ namespace UnityFigmaMCP.Editor.Exporters
                 {
                     existingChild.gameObject.SetActive(figmaChild.visible);
                     ApplyPipeline(existingChild.gameObject, figmaChild, parent, rootFrame, figmaParent);
+                    
                     if (!IsCollapsedInstance(figmaChild))
                         SyncVariantChildren(existingChild, figmaChild, rootFrame);
                 }
@@ -172,11 +176,11 @@ namespace UnityFigmaMCP.Editor.Exporters
 
             if (figmaObject.type == FigmaObjectType.INSTANCE)
             {
-                childObject = InstantiatePrefab(figmaObject, prefabsPath);
+                childObject = InstantiatePrefab(figmaObject);
                 if (childObject != null)
                 {
                     new RectTransformPipelineStep()
-                        .Execute(new ObjectLayoutContext(childObject, figmaObject, parent, rootFrame, _spriteMap));
+                        .Execute(new ObjectLayoutContext(childObject, figmaObject, parent, rootFrame, _assets));
                     GameObjectUtility.EnsureUniqueNameForSibling(childObject);
                     return;
                 }
@@ -227,7 +231,7 @@ namespace UnityFigmaMCP.Editor.Exporters
         private void ApplyPipeline(GameObject gameObject, FigmaObject figmaObject, Transform parent,
             FigmaObject rootFrame, FigmaObject parentFigmaObject = null)
         {
-            var layoutContext = new ObjectLayoutContext(gameObject, figmaObject, parent, rootFrame, _spriteMap, parentFigmaObject);
+            var layoutContext = new ObjectLayoutContext(gameObject, figmaObject, parent, rootFrame, _assets, parentFigmaObject);
 
             foreach (var step in _pipelineProfile.PipelineSteps)
                 step?.Execute(layoutContext);
@@ -256,43 +260,17 @@ namespace UnityFigmaMCP.Editor.Exporters
             }
         }
 
-        private bool IsCollapsedInstance(FigmaObject figmaObject)
+        private bool IsCollapsedInstance(FigmaObject figmaObject) => _assets.ResolvePrefab(figmaObject) != null;
+
+        private GameObject InstantiatePrefab(FigmaObject figmaObject)
         {
-            if (figmaObject.type != FigmaObjectType.INSTANCE)
-                return false;
+            var match = _assets.ResolvePrefab(figmaObject);
+            if (match == null)
+                return null;
 
-            var componentName = FigmaAssetPathHelper.SanitizeName(figmaObject.name);
-            var componentKey = _file.GetComponentKey(figmaObject.componentId) ?? figmaObject.componentId;
-
-            if (_componentMap.FindPrefab(componentKey, componentName) != null)
-                return true;
-
-            return _spriteMap.Find(componentKey) != null || _spriteMap.Find(figmaObject.name) != null;
-        }
-
-        private GameObject InstantiatePrefab(FigmaObject figmaObject, string prefabsPath)
-        {
-            var componentName = FigmaAssetPathHelper.SanitizeName(figmaObject.name);
-            var componentKey = _file.GetComponentKey(figmaObject.componentId) ?? figmaObject.componentId;
-
-            var prefab = _componentMap.FindPrefab(componentKey, componentName);
-            if (prefab != null)
-                return InstantiateInPreview(prefab);
-
-            var searchPath = !string.IsNullOrEmpty(_prefabSearchPath) ? _prefabSearchPath : prefabsPath;
-            var guids = AssetDatabase.FindAssets($"t:Prefab {componentName}", new[] {searchPath.TrimEnd('/')});
-            foreach (var guid in guids)
-            {
-                var found = (GameObject) AssetDatabase.LoadAssetAtPath(AssetDatabase.GUIDToAssetPath(guid), typeof(GameObject));
-                if (found != null && found.name == componentName)
-                    return InstantiateInPreview(found);
-            }
-
-            var sprite = _spriteMap.Find(componentKey) ?? _spriteMap.Find(figmaObject.name);
-            if (sprite != null)
-                return CreateSpriteObject(figmaObject.name, sprite);
-
-            return null;
+            return match.Kind == AssetMatchKind.Sprite
+                ? CreateSpriteObject(figmaObject.name, match.Sprite)
+                : InstantiateInPreview(match.Prefab);
         }
 
         private GameObject CreateSpriteObject(string objectName, Sprite sprite)

@@ -14,20 +14,35 @@ namespace UnityFigmaMCP.Editor
 
         [SerializeField] private List<FigmaComponent> components = new();
 
-        public GameObject FindPrefab(string key, string prefabName = null)
+        public GameObject FindPrefab(string key, string prefabName = null) => FindMatch(key, prefabName)?.Prefab;
+
+        public FigmaComponentMatch FindMatch(string key, string prefabName = null)
         {
-            foreach (var comp in components)
+            if (!string.IsNullOrEmpty(key))
             {
-                var variant = comp.FindVariant(key, prefabName);
-                if (variant != null)
-                    return variant.prefab != null ? variant.prefab : comp.prefab;
+                var byKey = FindMatch(c => c.id == key, v => v.id == key);
+                if (byKey != null)
+                    return byKey;
             }
 
-            var component = FindComponent(key, prefabName);
-            if (component != null)
-                return component.prefab;
+            if (!string.IsNullOrEmpty(prefabName))
+                return FindMatch(c => c.name == prefabName, v => v.name == prefabName);
 
             return null;
+        }
+
+        private FigmaComponentMatch FindMatch(Func<FigmaComponent, bool> isComponent,
+            Func<FigmaComponentVariant, bool> isVariant)
+        {
+            foreach (var component in components)
+            {
+                var variant = component.variants.FirstOrDefault(isVariant);
+                if (variant != null && (variant.prefab != null || component.prefab != null))
+                    return new FigmaComponentMatch(component, variant);
+            }
+
+            var match = components.FirstOrDefault(c => c.prefab != null && isComponent(c));
+            return match != null ? new FigmaComponentMatch(match, null) : null;
         }
 
         public FigmaComponent FindComponent(string key, string prefabName = null)

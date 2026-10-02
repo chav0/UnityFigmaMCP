@@ -1,5 +1,4 @@
 using System;
-using UnityEditor;
 using UnityEngine;
 using UnityEngine.UI;
 using UnityFigmaMCP.Common;
@@ -51,7 +50,7 @@ namespace UnityFigmaMCP.Editor
             color = new Color(color.r, color.g, color.b, color.a * figmaObject.opacity.GetValueOrDefault(1f));
             image.color = color;
 
-            var sprite = FindSprite(figmaObject, context.SpriteMap);
+            var sprite = context.Assets?.ResolveSprite(figmaObject)?.Sprite;
             image.sprite = sprite;
 
             if (sprite != null)
@@ -68,43 +67,6 @@ namespace UnityFigmaMCP.Editor
             {
                 image.raycastTarget = false;
             }
-        }
-
-        private static Sprite FindSprite(FigmaObject figmaObject, FigmaSpriteMap spriteMap)
-        {
-            var mapped = spriteMap?.Find(figmaObject.name);
-            if (mapped != null)
-                return mapped;
-
-            foreach (var fill in figmaObject.fills)
-            {
-                if (fill.type != "IMAGE")
-                    continue;
-
-                var spriteByReference = spriteMap?.Find(fill.imageRef);
-                if (spriteByReference != null)
-                    return spriteByReference;
-
-                var spriteBySearch = FindSpriteInProject(fill.imageRef);
-                if (spriteBySearch != null)
-                    return spriteBySearch;
-            }
-
-            return FindSpriteInProject(figmaObject.name);
-        }
-
-        private static Sprite FindSpriteInProject(string spriteName)
-        {
-            var guids = AssetDatabase.FindAssets($"t:Sprite {spriteName}", new[] { "Assets" });
-            foreach (var guid in guids)
-            {
-                var sprite = (Sprite)AssetDatabase.LoadAssetAtPath(AssetDatabase.GUIDToAssetPath(guid), typeof(Sprite));
-                
-                if (sprite != null && sprite.name.Equals(spriteName))
-                    return sprite;
-            }
-
-            return null;
         }
     }
 }
