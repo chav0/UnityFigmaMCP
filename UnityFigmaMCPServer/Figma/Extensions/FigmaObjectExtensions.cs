@@ -26,16 +26,20 @@ namespace UnityFigmaMCP.Server.Figma
             return null;
         }
     
-        internal static object ToSlim(this FigmaObject node)
+        internal static object ToSlim(this FigmaObject node, int? depth = null)
         {
             if (node == null) return null;
+
+            var expand = depth == null || depth > 0;
+            var hasChildren = node.children != null && node.children.Length > 0;
 
             return new
             {
                 id = node.id,
                 name = node.name,
                 type = node.type.ToString(),
-                children = node.children?.Select(ToSlim).ToArray()
+                children = expand && hasChildren ? node.children.Select(child => child.ToSlim(depth - 1)).ToArray() : null,
+                childCount = !expand && hasChildren ? node.children.Length : (int?)null
             };
         }
     }}

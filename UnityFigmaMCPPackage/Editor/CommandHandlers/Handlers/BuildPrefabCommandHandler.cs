@@ -34,11 +34,10 @@ namespace UnityFigmaMCP.Editor
             if (prefab == null)
                 return null;
 
-            var assetPath = AssetDatabase.GetAssetPath(prefab);
-
             var result = new BuildPrefabCommandResult
             {
-                Root = UnityObjectConverter.Convert(prefab, context.Mappers.All, assetPath)
+                AssetPath = AssetDatabase.GetAssetPath(prefab),
+                Root = UnityObjectConverter.Convert(prefab, context.Mappers.All)
             };
 
             var component = settings.ComponentMap.FindComponent(null, prefab.name);

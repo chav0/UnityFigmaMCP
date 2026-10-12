@@ -33,23 +33,26 @@ If the user gives a Figma URL, extract the file key and node ID from it.
 
 ### Step 1 — Fetch the Figma node
 
-Call `figma_get_node` with the file key and node ID. This downloads the full node tree
-and saves it locally for the build pipeline to use.
+Call `figma_get_node(fileKey, nodeId)`. This downloads the full node tree and saves it
+locally for the build pipeline to use. Wait for it to finish before Step 2:
+`figma_get_node_names` reads that saved copy and fails if it is not there yet.
 
 ### Step 2 — Show preview
 
-Do these two calls in parallel:
-- `figma_export_image` — export the node as a PNG at 1x scale (pass `[nodeId]`), then show the image to the user
-- `figma_get_node_names` — get the slim hierarchy tree
+Once Step 1 has finished, do these two calls in parallel:
+- `figma_export_image(fileKey, nodeIds: [nodeId], scale: 1)` — `nodeIds` is an array even for
+  one node. Show the image to the user.
+- `figma_get_node_names(fileKey, nodeId, depth: 3)` — the slim hierarchy, three levels deep.
 
-Display the hierarchy to the user, but limit to 3 levels deep to keep it readable.
-The user needs to see what they're about to build — the structure might be more complex
-than expected, or it might be the wrong node.
+Display the hierarchy to the user. The user needs to see what they're about to build — the
+structure might be more complex than expected, or it might be the wrong node.
 
 ### Step 3 — Rename objects in Figma
 
 If the root node is NOT a component (i.e. it's a plain FRAME), review the hierarchy
-from Step 2 and identify nodes with generic auto-generated Figma names like "Frame 32",
+from Step 2. Nodes cut off at depth 3 show `childCount` instead of `children` — call
+`figma_get_node_names(fileKey, <their id>, depth: 3)` to look further down. Identify nodes
+with generic auto-generated Figma names like "Frame 32",
 "Group 5", "Rectangle 1", "Vector", etc. Rename them directly in the Figma file
 using the Figma MCP before building — the prefab will inherit the correct names.
 

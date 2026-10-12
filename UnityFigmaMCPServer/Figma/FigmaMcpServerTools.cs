@@ -27,11 +27,15 @@ namespace UnityFigmaMCP.Server.Figma
             => _files.GetNodeAsync(fileKey, nodeId, ct);
 
         [McpServerTool(Name = "figma_get_node_names")]
-        [Description("Get a slim tree (id, name, type, children only) of a node previously fetched via figma_get_node. Reads the saved working copy — no network call. Use for quick orientation in the node structure.")]
+        [Description("Get a slim tree (id, name, type, children only) of a node previously fetched via figma_get_node, or of any node inside one. " +
+                     "Reads the saved working copy — no network call, so call figma_get_node first and do not run the two in parallel. " +
+                     "Pass depth to keep the answer small: nodes cut off at that depth show childCount instead of children — " +
+                     "call again with one of their ids to look deeper.")]
         public string GetNodeNames(
             [Description("Figma file key")] string fileKey,
-            [Description("Node ID (e.g. \"123:456\")")] string nodeId)
-            => _files.GetNodeNames(fileKey, nodeId);
+            [Description("Node ID (e.g. \"123:456\") — the fetched node or any node inside it")] string nodeId,
+            [Description("How many levels below the node to include (e.g. 3). 0 returns only the node itself. Null returns the whole tree.")] int? depth = null)
+            => _files.GetNodeNames(fileKey, nodeId, depth);
 
         [McpServerTool(Name = "figma_get_component_info")]
         [Description("Get the Figma component key and component set info for a node within a previously fetched subtree. Use to discover the figmaKey needed for unity_bind.")]

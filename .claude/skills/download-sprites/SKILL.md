@@ -36,8 +36,8 @@ If either fails, tell the user to run `/setup-project` first.
 The user may provide sprites in different ways:
 
 **A) Figma file key + node ID(s):**
-The user gives specific node IDs. Fetch the node tree with `figma_get_node` and
-`figma_get_node_names` to understand what they point at.
+The user gives specific node IDs. Fetch the node tree with `figma_get_node`, then — once it
+has finished — call `figma_get_node_names` to understand what they point at.
 
 **B) Figma file key + parent node ID:**
 The user points to a frame or page that contains many sprites. Fetch the tree,

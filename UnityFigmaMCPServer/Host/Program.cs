@@ -1,3 +1,4 @@
+using System;
 using System.Net;
 using System.Net.Sockets;
 using System.Threading.Tasks;
@@ -5,6 +6,7 @@ using Microsoft.AspNetCore.Builder;
 using Microsoft.AspNetCore.Hosting;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Logging;
+using ModelContextProtocol;
 using UnityFigmaMCP.Common;
 using UnityFigmaMCP.Server.Figma;
 using UnityFigmaMCP.Server.Unity;
@@ -40,7 +42,18 @@ namespace UnityFigmaMCP.Server
             builder.Services
                 .AddMcpServer()
                 .WithStdioServerTransport()
-                .WithToolsFromAssembly();
+                .WithToolsFromAssembly()
+                .WithRequestFilters(filters => filters.AddCallToolFilter(next => async (request, ct) =>
+                {
+                    try
+                    {
+                        return await next(request, ct).ConfigureAwait(false);
+                    }
+                    catch (Exception exception) when (exception is not OperationCanceledException and not McpException)
+                    {
+                        throw new McpException(exception.Message, exception);
+                    }
+                }));
 
             var app = builder.Build();
 

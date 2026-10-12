@@ -25,19 +25,40 @@ namespace UnityFigmaMCP.Server.Figma
             return path;
         }
 
-        public string GetNodeNames(string fileKey, string nodeId)
+        public string GetNodeNames(string fileKey, string nodeId, int? depth)
+        {
+            if (depth < 0)
+                throw new ArgumentOutOfRangeException(nameof(depth), "depth must be 0 or greater.");
+
+            var node = FindFetchedNode(fileKey, nodeId)
+                       ?? throw new FileNotFoundException(
+                           $"Node '{nodeId}' for key '{fileKey}' not found. Call figma_get_node on it or on a node that contains it first.");
+
+            return JsonConvert.SerializeObject(node.ToSlim(depth),
+                new JsonSerializerSettings { NullValueHandling = NullValueHandling.Ignore });
+        }
+
+        private static FigmaObject FindFetchedNode(string fileKey, string nodeId)
         {
             var path = FigmaPathHelper.GetNodePath(fileKey, nodeId);
-            if (!File.Exists(path))
-                throw new FileNotFoundException($"Node '{nodeId}' for key '{fileKey}' not found. Call figma_get_node first to download it.");
+            if (File.Exists(path))
+            {
+                var node = JsonConvert.DeserializeObject<FigmaFile>(File.ReadAllText(path))?.root.FindNode(nodeId);
+                if (node != null)
+                    return node;
+            }
 
-            var file = JsonConvert.DeserializeObject<FigmaFile>(File.ReadAllText(path));
+            foreach (var jsonFile in Directory.GetFiles(FigmaPathHelper.GetFileDir(fileKey), "*.json"))
+            {
+                if (jsonFile == path)
+                    continue;
 
-            var node = file?.root.FindNode(nodeId);
-            if (node == null)
-                throw new InvalidOperationException($"Node '{nodeId}' not found in the saved file for key '{fileKey}'.");
+                var node = JsonConvert.DeserializeObject<FigmaFile>(File.ReadAllText(jsonFile))?.root?.FindNode(nodeId);
+                if (node != null)
+                    return node;
+            }
 
-            return JsonConvert.SerializeObject(node.ToSlim());
+            return null;
         }
 
         public string GetComponentInfo(string fileKey, string rootNodeId, string targetNodeId)
