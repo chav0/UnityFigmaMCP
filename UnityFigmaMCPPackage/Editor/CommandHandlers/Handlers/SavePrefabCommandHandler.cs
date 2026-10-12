@@ -28,7 +28,7 @@ namespace UnityFigmaMCP.Editor
             return new SavePrefabCommandResult
             {
                 AssetPath = command.AssetPath,
-                Root = UnityObjectConverter.Convert(prefab, context.Mappers.All, command.AssetPath)
+                Root = UnityObjectConverter.Convert(prefab, context.Mappers.All)
             };
         }
     }

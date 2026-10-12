@@ -178,6 +178,10 @@ namespace UnityFigmaMCP.Editor.Exporters
                     new RectTransformPipelineStep()
                         .Execute(new ObjectLayoutContext(childObject, figmaObject, parent, rootFrame, _spriteMap));
                     GameObjectUtility.EnsureUniqueNameForSibling(childObject);
+
+                    childObject.SetActive(figmaObject.visible);
+                    if (PrefabUtility.IsPartOfPrefabInstance(childObject))
+                        PrefabUtility.RecordPrefabInstancePropertyModifications(childObject);
                     return;
                 }
             }

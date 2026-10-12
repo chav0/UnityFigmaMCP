@@ -35,6 +35,7 @@ namespace UnityFigmaMCP.Server.Unity
                      "Runs the selected layout pipeline in Unity Editor and saves the result as a prefab asset. " +
                      "Call unity_get_pipelines first to discover available pipeline IDs. " +
                      "If savePath is null, uses the default prefab folder from FigmaAutoLayoutSettings. " +
+                     "The response's assetPath is where the prefab was saved; node paths in its hierarchy are relative to the prefab root. " +
                      "When the node is a COMPONENT_SET, builds the base prefab plus variant prefabs — " +
                      "the response includes a 'variants' array with each variant's name, path, and figmaKey. " +
                      "Variant prefabs start as copies of the base and must be edited individually via unity_edit_prefab to match their Figma variant.")]
@@ -60,12 +61,13 @@ namespace UnityFigmaMCP.Server.Unity
         }
 
         [McpServerTool(Name = "unity_edit_prefab")]
-        [Description("Apply a batch of edits to one prefab: add, update or remove components (RectTransform, Image, Text, layout groups, ContentSizeFitter) " +
-                     "and restructure the hierarchy (create, delete, reparent, setActive). " +
+        [Description("Apply a batch of edits to one prefab: set or remove components (rect, img, text, hLayout, vLayout, grid, fitter) " +
+                     "and restructure the hierarchy (create, instantiate, delete, reparent, setActive). " +
                      "Every edit runs inside a single prefab open/save cycle in the given order, " +
                      "and the asset is saved only if all of them succeed — a failure leaves the prefab untouched. " +
                      "Batch related changes into one call instead of calling repeatedly. " +
-                     "Call unity_get_hierarchy first to learn the object paths.")]
+                     "Call unity_get_hierarchy first and pass each node's path as-is — " +
+                     "paths are relative to the prefab root, and the root itself has no path.")]
         public Task<string> EditPrefab(
             [Description("Prefab asset path (e.g. \"Assets/UI/Prefabs/Panel.prefab\")")] string prefabPath,
             [Description("Edits to apply, in order.")] PrefabEdit[] edits,
@@ -98,7 +100,9 @@ namespace UnityFigmaMCP.Server.Unity
 
         [McpServerTool(Name = "unity_get_hierarchy")]
         [Description("Inspect the GameObject hierarchy of a prefab. " +
-                     "Returns the full tree for the prefab root, or a subtree rooted at the specified child.")]
+                     "Returns the full tree for the prefab root, or a subtree rooted at the specified child. " +
+                     "Each node's path is relative to the prefab root — the format unity_edit_prefab expects — and the root has no path. " +
+                     "A subtree keeps paths relative to the prefab root, not to the subtree.")]
         public Task<string> GetHierarchy(
             [Description("Prefab asset path (e.g. \"Assets/UI/Prefabs/Panel.prefab\")")] string prefabPath,
             [Description("Relative path to a child object inside the prefab (e.g. \"Header/Title\"). Null returns the full hierarchy.")] string? objectPath = null,

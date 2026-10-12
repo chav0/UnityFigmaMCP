@@ -27,7 +27,8 @@ namespace UnityFigmaMCP.Editor
                 }
             }
 
-            var currentPath = path ?? gameObject.name;
+            if (string.IsNullOrEmpty(path))
+                path = null;
 
             var result = new UnityObject
             {
@@ -74,7 +75,7 @@ namespace UnityFigmaMCP.Editor
                     for (var i = 0; i < transform.childCount; i++)
                     {
                         var child = transform.GetChild(i).gameObject;
-                        var childPath = currentPath + "/" + child.name;
+                        var childPath = path == null ? child.name : path + "/" + child.name;
                         children.Add(Convert(child, mappers, childPath, true, false));
                     }
                     result.Children = children.ToArray();

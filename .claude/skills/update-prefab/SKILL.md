@@ -38,8 +38,11 @@ from the component map via `unity_list_assets` with `kind: "prefab"`.
 ### Step 1 — Fetch both sides
 
 Do these in parallel:
-- `figma_get_node` + `figma_get_node_names` — get the current Figma tree
-- `unity_get_hierarchy` — get the current Unity prefab hierarchy
+- `figma_get_node(fileKey, nodeId)` — download the current Figma tree
+- `unity_get_hierarchy(prefabPath)` — get the current Unity prefab hierarchy
+
+Then call `figma_get_node_names(fileKey, nodeId)`. It reads the copy `figma_get_node` saved,
+so it fails if run before or alongside it.
 
 ### Step 2 — Compare
 

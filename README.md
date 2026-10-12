@@ -124,7 +124,7 @@ https://github.com/chav0/UnityFigmaMCP.git?path=UnityFigmaMCPPackage
 To pin a specific version:
 
 ```
-https://github.com/chav0/UnityFigmaMCP.git?path=UnityFigmaMCPPackage#v0.1.1
+https://github.com/chav0/UnityFigmaMCP.git?path=UnityFigmaMCPPackage#v0.1.2
 ```
 
 The package auto-connects to the MCP server on port `52802` when the Editor starts.
@@ -193,7 +193,7 @@ This runs the `status` tool and confirms both the Figma token and Unity connecti
 **Unity Package** — change the tag in your `Packages/manifest.json`:
 
 ```json
-"com.hugglebit.unity.figma.mcp": "https://github.com/chav0/UnityFigmaMCP.git?path=UnityFigmaMCPPackage#v0.1.1"
+"com.hugglebit.unity.figma.mcp": "https://github.com/chav0/UnityFigmaMCP.git?path=UnityFigmaMCPPackage#v0.1.2"
 ```
 
 **MCP Server** — pull and rebuild:

@@ -28,13 +28,18 @@ This is always the first step — other tools operate on the saved data.
 
 ### `figma_get_node_names`
 
-Get a slim tree (id, name, type, children) of a previously fetched node. No network call — reads
-the local copy. Use for quick orientation in the hierarchy.
+Get a slim tree (id, name, type, children) of a previously fetched node, or of any node
+inside one. No network call — it reads the local copy, so call `figma_get_node` first and
+do not run the two in parallel.
 
 | Parameter | Type | Required | Description |
 |-----------|------|----------|-------------|
 | `fileKey` | string | yes | Figma file key |
-| `nodeId` | string | yes | Node ID |
+| `nodeId` | string | yes | The fetched node, or any node inside it |
+| `depth` | int | no | Levels below the node to include; `0` returns only the node (default: whole tree) |
+
+Nodes cut off at `depth` show `childCount` instead of `children`. To look further down,
+call again with one of their ids.
 
 ### `figma_get_component_info`
 
@@ -83,11 +88,14 @@ Build a Unity UI prefab from a Figma node previously fetched via `figma_get_node
 
 When the node is a `COMPONENT_SET`, builds the base prefab plus variant prefabs automatically.
 
+**Returns** `AssetPath` — where the prefab was saved — and its hierarchy (`Root`), plus
+`Variants` for a component set. Node paths in the hierarchy are relative to the prefab root.
+
 ## Edit Tools
 
 ### `unity_edit_prefab`
 
-Apply a batch of edits to one prefab: add, update or remove components and restructure
+Apply a batch of edits to one prefab: set or remove components and restructure
 the hierarchy. All edits run in a single open/save cycle — failure leaves the prefab untouched.
 
 | Parameter | Type | Required | Description |
@@ -154,6 +162,11 @@ Inspect the GameObject hierarchy of a prefab with all components and properties.
 |-----------|------|----------|-------------|
 | `prefabPath` | string | yes | Prefab asset path |
 | `objectPath` | string | no | Child path for subtree (null = full hierarchy) |
+
+Each node's `Path` is relative to the prefab root — exactly what `unity_edit_prefab`
+expects in `path`, so it can be passed as-is. The root has no `Path`. A subtree keeps
+paths relative to the prefab root: with `objectPath: "Header"` the subtree root is
+`Header` and its child is `Header/Title`.
 
 Nested prefab instances are returned as leaf nodes: they carry `GO.Prefab` with the
 asset path but no `Children`, so a deep tree does not inline every nested asset.
